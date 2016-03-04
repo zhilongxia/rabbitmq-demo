@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="  
+            http://www.springframework.org/schema/beans  
+            http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+            http://www.springframework.org/schema/context   
+            http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+            http://www.springframework.org/schema/rabbit 
+			http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd">
+ 
+ 	<!-- 连接服务配置  -->
+    <rabbit:connection-factory id="connectionFactory" host="localhost" username="guest" password="guest" port="5672"  />
+    <rabbit:admin connection-factory="connectionFactory" />  
+  
+    <!--定义rabbit template用于数据的接收和发送 --> 
+    <rabbit:template exchange="exchangeTest" id="amqpTemplate"  connection-factory="connectionFactory"  message-converter="jsonMessageConverter"/>
+    
+    <!-- 将生产者生产的数据转换为json存入消息队列-->
+    <bean id="jsonMessageConverter" class="com.handle.FastJsonMessageConverter"></bean>
+    
+    <!--定义queue -->  
+    <rabbit:queue name="queueTest" durable="true" auto-delete="false" exclusive="false" />  
+  
+    <!-- 定义direct exchange，绑定queueTest -->  
+    <rabbit:direct-exchange id="direc-module" name="exchangeTest" durable="true" auto-delete="false">  
+        <rabbit:bindings>  
+            <rabbit:binding queue="queueTest" key="queueTestKey"></rabbit:binding>  
+        </rabbit:bindings>  
+    </rabbit:direct-exchange>  
+  
+    <!-- 消息发送者 -->  
+    <bean id="messageProducer" class="com.produce.direct.MessageProducer"></bean> 
+</beans>

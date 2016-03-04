@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="  
+            http://www.springframework.org/schema/beans  
+            http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+            http://www.springframework.org/schema/context   
+            http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+            http://www.springframework.org/schema/rabbit 
+			http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd">
+ 
+ 	<!-- 连接服务配置  -->
+    <rabbit:connection-factory id="connectionFactory" host="localhost" username="guest" password="guest" port="5672"  />
+    <rabbit:admin connection-factory="connectionFactory" />  
+  
+    <!--定义rabbit template用于数据的接收和发送 --> 
+    <rabbit:template id="amqpTemplate" connection-factory="connectionFactory" exchange="exchange_topic_Test" routing-key="kerryTest.apple"/>  
+    
+    <!--定义queue -->  
+    <rabbit:queue name="queue_topic"/>   
+    
+    <rabbit:topic-exchange name="exchange_topic_Test">  
+	    <rabbit:bindings>  
+	        <rabbit:binding queue="queue_topic" pattern="kerryTest.*" />  
+	    </rabbit:bindings>  
+	</rabbit:topic-exchange>  
+	
+	    <!-- 消息发送者 -->  
+    <bean id="topicMessageProducer" class="com.produce.topic.TopicMessageProducer"></bean> 
+</beans>

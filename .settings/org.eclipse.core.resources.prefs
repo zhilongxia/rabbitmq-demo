@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+encoding//src/main/java/com/produce/RPCServer.java=GBK
+encoding//src/test/java/rabbitmq/test/FanoutMessageTest.java=UTF-8
+encoding//src/test/java/rabbitmq/test/MessageTest.java=UTF-8
